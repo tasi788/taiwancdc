@@ -12,40 +12,44 @@ from time import sleep
 
 logger = logging.getLogger(__name__)
 
-class DataBase:
-    def __init__(self):
-        self.file = self.file_check()
 
-    def file_check(self):
-        if not os.path.exists('./record.json'):
-            with open('./record.json', 'w', encoding='utf8') as f:
-                f.write('{"id": []}')
-        f = open('./record.json', 'r', encoding='utf8').read()
-        return f
+class DataSet:
+    def __init__(self):
+        self.filepath = './record.json'
+        if not os.path.exists(self.filepath):
+            with open(self.filepath, 'w') as f:
+                f.write('{"url": []}')
 
     def parse(self) -> dict:
+        data = open(self.filepath, 'r').read()
         try:
-            data = json.loads(self.file)
+            return json.loads(data)
         except JSONDecodeError:
-            logger.fatal('record.json 解析錯誤。')
-        else:
-            return data
+            logger.fatal('資料結構錯誤。')
 
-    def find(self, id_: str) -> bool:
+    def find(self, url: str) -> bool:
         data = self.parse()
-        if id_ in data['id']:
-            return True
+        if data and 'url' in data.keys():
+            if url in data['url']:
+                return True
+            return False
         return False
 
-    def add(self, id_: str) -> bool:
+    def insert(self, url: str) -> bool:
         data = self.parse()
-        data['id'].append(id_)
-        data['id'] = data['id'][:31]
-        with open('./record.json', 'w', encoding='utf8') as f:
-            f.write(
-                json.dumps(data, ensure_ascii=False)
-            )
-        return True
+        if not data:
+            logger.fatal('資料結構爛掉')
+            return False
+        if 'url' in data.keys():
+            values = data['url']
+            values.insert(0, url)
+            data['url'] = values[:100]
+        else:
+            data['url'] = [url]
+        # write
+        t_ = json.dumps(data, ensure_ascii=False)
+        with open(self.filepath, 'w') as f:
+            f.write(t_)
 
 
 def fetch() -> Union[str, bool]:
@@ -67,7 +71,7 @@ def broadcast(entries: List[feedparser.util.FeedParserDict]) -> bool:
     api_token = ''
     api_base = f'https://api.telegram.org/bot{api_token}/'
     # -1001224810715
-    check = DataBase()
+    check = DataSet()
     for content in entries:
         if check.find(content.link):
             continue
@@ -80,7 +84,7 @@ def broadcast(entries: List[feedparser.util.FeedParserDict]) -> bool:
                 api_base+'sendMessage',
                 json=payload
             )
-            check.add(content.link)
+            check.insert(content.link)
 
 
 def run():
