@@ -71,6 +71,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "tinydb"
+version = "4.6.1"
+description = "TinyDB is a tiny, document oriented database optimized for your happiness :)"
+category = "main"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[[package]]
 name = "urllib3"
 version = "1.26.7"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -86,7 +94,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "891213fe75aa8c1a85258126f3bb9b275805b4f4924e2353c9bd61929303dc59"
+content-hash = "a3ebc9ee15533fbe40c7b9f5e648213c16389b4a912c412f76f36e68802ef68d"
 
 [metadata.files]
 certifi = [
@@ -115,6 +123,10 @@ requests = [
 ]
 sgmllib3k = [
     {file = "sgmllib3k-1.0.0.tar.gz", hash = "sha256:7868fb1c8bfa764c1ac563d3cf369c381d1325d36124933a726f29fcdaa812e9"},
+]
+tinydb = [
+    {file = "tinydb-4.6.1-py3-none-any.whl", hash = "sha256:ac1fdae2a7d5d7e2ca915d2666e685d63982991827c5dd097b6be4a3b5822dbc"},
+    {file = "tinydb-4.6.1.tar.gz", hash = "sha256:0d5400f5e5ae368a84d57cb234456f1cf70430fd39bcd77ccd568fea91ff2a4e"},
 ]
 urllib3 = [
     {file = "urllib3-1.26.7-py2.py3-none-any.whl", hash = "sha256:c4fdf4019605b6e5423637e01bc9fe4daef873709a7973e195ceba0a62bbc844"},

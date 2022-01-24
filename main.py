@@ -3,53 +3,12 @@ import feedparser
 import logging
 from typing import Union, List
 from html2text import html2text
-import json
-from json.decoder import JSONDecodeError
-import os
 from html import escape
 from time import sleep
-
+from tinydb import TinyDB, Query
 
 logger = logging.getLogger(__name__)
-
-
-class DataSet:
-    def __init__(self):
-        self.filepath = './record.json'
-        if not os.path.exists(self.filepath):
-            with open(self.filepath, 'w') as f:
-                f.write('{"url": []}')
-
-    def parse(self) -> dict:
-        data = open(self.filepath, 'r').read()
-        try:
-            return json.loads(data)
-        except JSONDecodeError:
-            logger.fatal('資料結構錯誤。')
-
-    def find(self, url: str) -> bool:
-        data = self.parse()
-        if data and 'url' in data.keys():
-            if url in data['url']:
-                return True
-            return False
-        return False
-
-    def insert(self, url: str) -> bool:
-        data = self.parse()
-        if not data:
-            logger.fatal('資料結構爛掉')
-            return False
-        if 'url' in data.keys():
-            values = data['url']
-            values.insert(0, url)
-            data['url'] = values[:100]
-        else:
-            data['url'] = [url]
-        # write
-        t_ = json.dumps(data, ensure_ascii=False)
-        with open(self.filepath, 'w') as f:
-            f.write(t_)
+db = TinyDB('db.json')
 
 
 def fetch() -> Union[str, bool]:
@@ -71,9 +30,11 @@ def broadcast(entries: List[feedparser.util.FeedParserDict]) -> bool:
     api_token = ''
     api_base = f'https://api.telegram.org/bot{api_token}/'
     # -1001224810715
-    check = DataSet()
+
     for content in entries:
-        if check.find(content.link):
+        rss_query = Query()
+        result = db.search(rss_query.link == content.link)
+        if result:
             continue
         else:
             text = f'**{escape(content.title)}**\n' + \
@@ -81,10 +42,14 @@ def broadcast(entries: List[feedparser.util.FeedParserDict]) -> bool:
             keyboard = {'inline_keyboard': [[{'text': '🔗 前往網頁', 'url': content.link}]]}
             payload = {'chat_id': -1001224810715, 'text': text, 'reply_markup': keyboard, 'parse_mode': 'markdown'}
             r = requests.post(
-                api_base+'sendMessage',
+                api_base + 'sendMessage',
                 json=payload
             )
-            check.insert(content.link)
+            db.insert({'link': content.link})
+            extrator = db.all()
+            for r in extrator[20:]:
+                rss_query = Query()
+                db.remove(rss_query.link == r['link'])
 
 
 def run():
@@ -92,6 +57,16 @@ def run():
     if resource:
         data = parser(resource)
         broadcast(data)
+
+
+def first_run():
+    resource = fetch()
+    if resource:
+        for data in parser(resource):
+            db.insert({'link': data.link})
+
+
+first_run()
 
 while True:
     run()

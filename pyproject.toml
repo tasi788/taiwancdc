@@ -9,6 +9,7 @@ python = "^3.8"
 feedparser = "^6.0.8"
 requests = "^2.26.0"
 html2text = "^2020.1.16"
+tinydb = "^4.6.1"
 
 [tool.poetry.dev-dependencies]
 
