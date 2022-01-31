@@ -1,0 +1,12 @@
+name = "taiwancdc"
+type = "webpack"
+route = ''
+zone_id = ''
+usage_model = ''
+compatibility_flags = []
+workers_dev = true
+compatibility_date = "2022-01-31"
+account_id = "f242adebab552ca8f7ef43b3a2ae64ba"
+kv_namespaces = [
+         { binding = "taiwancdc", id = "44a042da5bd54049a3641133715efd1d", preview_id = "697a3e3fd3a14d59a94583d94e756b94" }
+]

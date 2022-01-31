@@ -1,8 +1,0 @@
-version: "3"
-services:
-  taiwancdc:
-    build: .
-    container_name: taiwancdc
-    restart: always
-    volumes:
-      - ./:/app
