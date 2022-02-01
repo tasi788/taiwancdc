@@ -2,7 +2,7 @@ import {parseFeed} from 'htmlparser2';
 
 const url = "https://www.cdc.gov.tw/RSS/RssXml/Hh094B49-DRwe2RR4eFfrQ?type=1"
 const tg = "https://api.telegram.org/bot" + tgtoken + "/sendMessage"
-const notifys = [-1001224810715, -1001452847515]
+const notifys = [-1001224810715, -1001452847515, -1001652674946]
 
 addEventListener('fetch', event => {
     event.respondWith(handleRequest(event.request))
