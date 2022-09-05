@@ -47,7 +47,7 @@ async function handleRequest(request) {
         let value = await taiwancdc.get(entry.link)
         let firstRun = await taiwancdc.get("first")
         if (firstRun === "true") {
-            taiwancdc.put(entry.link, 1, {expirationTtl: 604800})
+            taiwancdc.put(entry.link, 1, {expirationTtl: 1209600})
             return new Response(
                 JSON.stringify({
                     status: "true",
